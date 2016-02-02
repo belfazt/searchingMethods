@@ -24,66 +24,77 @@ def swap(matrix, initialCoordinates, finalCoordinates):
 	tempMatrix[finalCoordinates[0]][finalCoordinates[1]] = temp
 	return tempMatrix
 
-
-def addMovements(tree, node):
+def addMovements(tree, node, statuses):
 	for i in xrange(0,4):
 		tag = copy(node.tag)
 		data = deepcopy(tag['status'])
 		zero = findValue(data, 0)
-		if i == 0 and zero[0] < 2:
-			tag['status'] = swap(data, zero, [zero[0]+1, zero[1]])
-		elif i == 1 and zero[0] > 0:
-			tag['status'] = swap(data, zero, [zero[0]-1, zero[1]])
-		elif i == 2 and zero[1] < 2:
-			tag['status'] = swap(data, zero, [zero[0], zero[1]+1])
-		elif i == 2 and zero[1] > 0:
-			tag['status'] = swap(data, zero, [zero[0], zero[1]-1])
-		tree.create_node(parent=node.identifier, tag=tag)
+		#swaps
+		if i == 0 and zero[0] < 2: #down
+			tag['status'] = swap(data, zero, [zero[0] + 1, zero[1]])
+		elif i == 1 and zero[0] > 0: #up
+			tag['status'] = swap(data, zero, [zero[0] - 1, zero[1]])
+		elif i == 2 and zero[1] < 2: #left
+			tag['status'] = swap(data, zero, [zero[0], zero[1] + 1])
+		elif i == 3 and zero[1] > 0: #right
+			tag['status'] = swap(data, zero, [zero[0], zero[1] - 1])
+		if str(tag['status']) not in statuses:
+			tree.create_node(parent=node.identifier, tag=tag)
 
-def solve8Puzzle(tree):
+def solve8PuzzleByBreadth(tree):
 	success = [[0,1,2],[3,4,5],[6,7,8]]
 	statuses = dict()
 	for node in tree.all_nodes():
 		node.tag['distance'] = float('inf')
 	root = getRootNode(tree)
 	root.tag['distance'] = 0
-	statuses[''.join(root.tag['status'])] = True
-	print statuses
-	addMovements(tree, root)
+	statuses[str(root.tag['status'])] = True
+	addMovements(tree, root, statuses)
 	q = deque([root])
 	while q:
 		current = q.popleft()
 		for node in tree.children(current.identifier):
 			node.tag['distance'] = current.tag['distance'] + 1
-			if node.tag == success:
+			statuses[str(node.tag['status'])] = True
+			addMovements(tree, node, statuses)
+			if node.tag['status'] == success:
 				return node
 			q.append(node)
 
+def solve8PuzzleByDepth(tree):
+	success = [[0,1,2],[3,4,5],[6,7,8]]
+	statuses = dict()
+	for node in tree.all_nodes():
+		node.tag['distance'] = float('inf')
+	root = getRootNode(tree)
+	root.tag['distance'] = 0
+	statuses[str(root.tag['status'])] = True
+	addMovements(tree, root, statuses)
+	s = [root]
+	while s:
+		current = s.pop()
+		for node in tree.children(current.identifier):
+			node.tag['distance'] = current.tag['distance'] + 1
+			statuses[str(node.tag['status'])] = True
+			addMovements(tree, node, statuses)
+			if node.tag['status'] == success:
+				return node
+			s.append(node)
 
 def getRootNode(tree):
 	for i in tree.all_nodes():
 		if i.is_root():
 			return i
 
-def bfs(tree, identifier):
-	q = deque([getRootNode(tree)])
-	while q:
-		for i in tree.children(q.popleft().identifier):
-			if i.identifier == identifier:
-				return i
-			q.append(i)
-
-def dfs(tree, identifier):
-	s = [getRootNode(tree)]
-	while s:
-		for i in tree.children(s.pop().identifier):
-			if i.identifier == identifier:
-				return i
-			s.append(i)
+def printMatrix(matrix):
+	for i in matrix:
+		print i
 
 if __name__ == '__main__':
 	puzzle = treelib.Tree()
-	data = {'status': [[7,2,4],[5,0,6],[8,3,1]]}
+	#data = {'status': [[7,2,4],[5,0,6],[8,3,1]]}
+	data = {'status': [[1,2,3],[0,4,5],[6,7,8]]}
 	root = puzzle.add_node(treelib.Node(tag=data))
-	solve8Puzzle(puzzle)
+	result = solve8PuzzleByBreadth(puzzle)
 	print puzzle
+	print result.tag
