@@ -30,6 +30,8 @@ def add_movements(tree, node, statuses):
 			tag['status'] = swap(data, zero, [zero[0], zero[1] + 1])
 		elif i == 3 and zero[1] > 0: #right
 			tag['status'] = swap(data, zero, [zero[0], zero[1] - 1])
+
+		tag['cost'] = get_cost(tag['status'])
 		if str(tag['status']) not in statuses:
 			tree.create_node(parent=node.identifier, tag=tag)
 
@@ -59,6 +61,41 @@ def solve_8_puzzle(tree, success=[[0,1,2],[3,4,5],[6,7,8]], strategy='bfs'):
 					return node
 				s.append(node)
 
+# Number of incorrect tiles
+def get_cost(state, success=[[0,1,2],[3,4,5],[6,7,8]]):
+	incorrect_tiles = 0
+	for i in range(len(state)):
+		for j in range(len(state[i])):
+			if state[i][j] != success[i][j]:
+				incorrect_tiles += 1
+
+	return incorrect_tiles
+
+# ...
+def get_best_node(tree):
+	best_node = None
+	lowest_cost = float('inf')
+	leaves = [node for node in tree.all_nodes() if node.is_leaf()]
+	
+	for node in leaves:
+		if node.tag['cost'] < lowest_cost:
+			lowest_cost = node.tag['cost']
+			best_node = node
+
+	return best_node
+
+def solve_8_puzzle_greedy_search(tree):
+	statuses = dict()
+	root = get_root_node(tree)
+	statuses[str(root.tag['status'])] = True
+	add_movements(tree, root, statuses)
+	current_node = get_best_node(tree)
+	while current_node.tag['cost'] != 0:
+		add_movements(tree, current_node, statuses) 
+		current_node = get_best_node(tree)
+
+	return current_node
+
 def solve_8_puzzle_a_star(tree):
 	pass
 
@@ -69,9 +106,13 @@ def get_root_node(tree):
 
 if __name__ == '__main__':
 	puzzle = treelib.Tree()
-	data = {'status': [[1,2,3],[0,4,5],[6,7,8]]}
+	initial_status = [[1,2,5],
+					  [0,3,8],
+					  [6,4,7]]
+	data = {'status': initial_status, 'cost': get_cost(initial_status)}
 	root = puzzle.add_node(treelib.Node(tag=data))
-	result = solve_8_puzzle(puzzle, strategy='dfs')
+	# result = solve_8_puzzle(puzzle, strategy='dfs')
+	result = solve_8_puzzle_greedy_search(puzzle)
 	print puzzle
 	print result.tag
 	print 'level: ' + str(puzzle.depth(result))
