@@ -71,7 +71,6 @@ def get_cost(state, success=[[0,1,2],[3,4,5],[6,7,8]]):
 
 	return incorrect_tiles
 
-# ...
 def get_best_node(tree):
 	best_node = None
 	lowest_cost = float('inf')
@@ -111,7 +110,9 @@ if __name__ == '__main__':
 					  [6,4,7]]
 	data = {'status': initial_status, 'cost': get_cost(initial_status)}
 	root = puzzle.add_node(treelib.Node(tag=data))
-	# result = solve_8_puzzle(puzzle, strategy='dfs')
+	#result = solve_8_puzzle(puzzle, strategy='bfs')
+	#print puzzle
+	#print result.tag
 	result = solve_8_puzzle_greedy_search(puzzle)
 	print puzzle
 	print result.tag

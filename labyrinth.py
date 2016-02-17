@@ -1,4 +1,5 @@
 from collections import deque
+import math
 import cv2
 import numpy as np
 
@@ -72,7 +73,30 @@ def solve_labyrinth(image, starting_point=[244,31], success=[15, 424], strategy=
 			cv2.imshow('labyrinth', image)
 			cv2.waitKey(1)
 
+def get_best_pixel(neighbors, goal):
+	minDistance = float('inf')
+	destPixel = []
+	for i in neighbors:
+		distance = math.sqrt(math.pow(i[0] - goal[0], 2) + math.pow(i[1] - goal[1], 2))
+		if distance < minDistance:
+			minDistance = distance
+			destPixel = i
+	return destPixel
+
+def solve_labyrinth_greedy(image, starting_point=[244,60], success=[15,424], debug=True):
+	current = starting_point
+	while current != success:
+		current = get_best_pixel(get_neighbors(image, current), success)
+		set_blue(image, current[0], current[1])
+		if debug:
+			cv2.imshow('labyrinth', image)
+			cv2.waitKey(1)
+	return image
+
+
 if __name__ == '__main__':
-	solvedLabyrinth = solve_labyrinth(cv2.imread('labyrinth.png'), strategy = 'dfs')
+	image = cv2.imread('labyrinth.png')
+	#solvedLabyrinth = solve_labyrinth(image, strategy = 'dfs', debug=False)
+	solvedLabyrinth = solve_labyrinth_greedy(image, debug = False)
 	cv2.imshow('solvedLabyrinth', solvedLabyrinth)
 	cv2.waitKey(0)	
