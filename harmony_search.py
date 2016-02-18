@@ -32,7 +32,7 @@ def init():
 		for j in xrange(0, nvar):
 			hm[i][j] = random.uniform(low[j], high[j])
 			nchv[j] = hm[i][j]
-		hm[i][nvar] = fitness(nchv)
+		hm[i][nvar - 1] = fitness(nchv)
 
 def fitness(x):
 	l = range(0, len(x))
@@ -52,11 +52,11 @@ def update_harmony_memory(fitness):
 	global best_fit_history
 	global hm
 
-	worst = hm[0][nvar]
+	worst = hm[0][nvar - 1]
 	worst_count = 0
 	for i in xrange(0, hms):
-		if hm[i][nvar] > worst:
-			worst = hm[i][nvar]
+		if hm[i][nvar - 1] > worst:
+			worst = hm[i][nvar - 1]
 			worst_count = i
 
 	worst_fit_history[generation] = worst
@@ -64,20 +64,20 @@ def update_harmony_memory(fitness):
 	if fitness < worst:
 		for k in xrange(0, nvar):
 			hm[worst_count][k] = nchv[k]
-		hm[worst_count][nvar] = fitness
+		hm[worst_count][nvar - 1] = fitness
 
-	best = hm[0][nvar]
+	best = hm[0][nvar - 1]
 	best_count = 0
 	for i in xrange(0, hms):
-		if (hm[i][nvar] < best):
-			best = hm[i][nvar]
+		if (hm[i][nvar - 1] < best):
+			best = hm[i][nvar - 1]
 			best_count = i
 	best_fit_history[generation] = best
 
 	if generation > 0 and best != best_fit_history[generation - 1]:
 		for k in xrange(0, nvar):
 			best_harmony[k] = hm[best_count][k]
-		best_harmony[nvar] = best
+		best_harmony[nvar - 1] = best
 
 def memory_consideration(index):
 	global nchv
@@ -106,6 +106,8 @@ def set_random_nchv(index):
 	nchv[index] = random.uniform(low[index], high[index])
 
 def solve():
+	global generation 
+
 	while not stop_needed():
 		for i in xrange(0, nvar):
 			if (random.random() < hmcr):
@@ -118,10 +120,16 @@ def solve():
 		update_harmony_memory(fitness(nchv))
 		generation += 1
 
+def print_result():
+	for i in xrange(0, nvar):
+		print("x[" + str(i) + "] = " + str(best_harmony[i]))
+
+	print("fitness = " + str(best_harmony[nvar - 1]))
 def main():
 	set_bounds([2.0, 3.0, 1.0, 1.0, 1.0], [5.0, 6.0, 2.0, 2.0, 2.0])
 	init()
 	solve()
+	print_result()
 
 if __name__ == '__main__':
 	main()
