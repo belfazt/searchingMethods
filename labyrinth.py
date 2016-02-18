@@ -68,7 +68,7 @@ def solve_labyrinth(image, starting_point=[244,31], success=[15, 424], strategy=
 				for neighbor in neighbors:
 					pending.append(neighbor)
 			else:
-				pending.append(neighbors)	
+				pending.append(neighbors)
 		if debug:
 			cv2.imshow('labyrinth', image)
 			cv2.waitKey(1)

@@ -64,6 +64,24 @@ def solve_8_puzzle(tree, success=[[0,1,2],[3,4,5],[6,7,8]], strategy='bfs'):
 				if node.tag['status'] == success:
 					return node
 				s.append(node)
+	elif(strategy == 'iddfs'):
+		for depth in xrange(1, 10000):
+			resultingNode = root
+			if (resultingNode.tag['status'] == success):
+				return resultingNode
+			s = [root]
+			while s:
+				current = s.pop()
+				for node in tree.children(current.identifier):
+					statuses[str(node.tag['status'])] = True
+					add_movements(tree, node, statuses)
+					resultingNode = node
+					if (tree.level(node.identifier) == depth):
+						break
+					s.append(node)
+	
+
+	
 
 # Number of incorrect tiles
 def get_cost(tree, node, success=[[0,1,2],[3,4,5],[6,7,8]]):
@@ -124,7 +142,7 @@ if __name__ == '__main__':
 					  [6,4,7]]
 	data = {'status': initial_status, 'cost': 1}
 	root = puzzle.add_node(treelib.Node(tag=data))
-	result = informed_search(puzzle, 'a_star')
+	result = solve_8_puzzle(puzzle, strategy = 'iddfs')
 	print puzzle
 	print result.tag
 	print 'level: ' + str(puzzle.depth(result))
