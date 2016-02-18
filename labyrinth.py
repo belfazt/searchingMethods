@@ -76,17 +76,26 @@ def solve_labyrinth(image, starting_point=[244,31], success=[15, 424], strategy=
 def get_best_pixel(neighbors, goal):
 	minDistance = float('inf')
 	destPixel = []
-	for i in neighbors:
-		distance = math.sqrt(math.pow(i[0] - goal[0], 2) + math.pow(i[1] - goal[1], 2))
-		if distance < minDistance:
-			minDistance = distance
+	for i in neighbors:		
+		dist = distance(i, goal)
+		if dist < minDistance:
+			minDistance = dist
 			destPixel = i
 	return destPixel
 
-def solve_labyrinth_greedy(image, starting_point=[244,60], success=[15,424], debug=True):
+def get_heuristic_best_pixel(neighbors, goal):
+	return get_best_pixel(neighbors, goal)
+
+def distance(source, target):
+	return math.sqrt(math.pow(source[0] - target[0], 2) + math.pow(source[1] - target[1], 2))
+
+def solve_labyrinth_informed(image, starting_point=[244,60], success=[15,424], strategy = 'greedy', debug=True):
 	current = starting_point
 	while current != success:
-		current = get_best_pixel(get_neighbors(image, current), success)
+		if strategy == 'greedy':
+			current = get_best_pixel(get_neighbors(image, current), success)
+		elif strategy == 'a_star':
+			current = get_heuristic_best_pixel(get_neighbors(image, current), success)
 		set_blue(image, current[0], current[1])
 		if debug:
 			cv2.imshow('labyrinth', image)
@@ -97,6 +106,6 @@ def solve_labyrinth_greedy(image, starting_point=[244,60], success=[15,424], deb
 if __name__ == '__main__':
 	image = cv2.imread('labyrinth.png')
 	#solvedLabyrinth = solve_labyrinth(image, strategy = 'dfs', debug=False)
-	solvedLabyrinth = solve_labyrinth_greedy(image, debug = False)
+	solvedLabyrinth = solve_labyrinth_informed(image, strategy = 'a_star', debug = True)
 	cv2.imshow('solvedLabyrinth', solvedLabyrinth)
 	cv2.waitKey(0)	
