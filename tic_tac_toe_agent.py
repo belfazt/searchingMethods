@@ -22,14 +22,15 @@ class TicTacToeAgent:
 		x, y = move
 		score = 0
 		count = 0
+		opponent_count = 0
 
 		# Row
 		for j in xrange(len(board[x])):
 			if board[x][j]['value'] == self.tag:
 				count += 1
 			elif board[x][j]['value'] is not None:
-				count -= 1
-		score += math.pow(10, count)
+				opponent_count += 1
+		score += math.pow(10, count) - math.pow(10, opponent_count)
 		count = 0
 
 		# Column
@@ -37,8 +38,8 @@ class TicTacToeAgent:
 			if board[i][y]['value'] == self.tag:
 				count += 1
 			elif board[i][y]['value'] is not None:
-				count -= 1
-		score += math.pow(10, count)
+				opponent_count += 1
+		score += math.pow(10, count) - math.pow(10, opponent_count)
 		count = 0				
 
 		# Diagonals
@@ -47,8 +48,8 @@ class TicTacToeAgent:
 				if board[i][i]['value'] == self.tag:
 					count += 1
 				elif board[i][i]['value'] is not None:
-					count -= 1	
-			score += math.pow(10, count)
+					opponent_count += 1	
+			score += math.pow(10, count) - math.pow(10, opponent_count)
 			count = 0
 
 		if x + y == len(board) - 1:
@@ -56,8 +57,8 @@ class TicTacToeAgent:
 				if board[i][len(board) - 1 - i]['value'] == self.tag:
 					count += 1
 				elif board[i][len(board) - 1 - i]['value'] is not None:
-					count -= 1	
-			score += math.pow(10, count)
+					opponent_count += 1	
+			score += math.pow(10, count) - math.pow(10, opponent_count)
 
 		return score
 
