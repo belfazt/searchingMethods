@@ -74,3 +74,4 @@ class TicTacToeAgent:
 
 	def get_tag(self):
 		return self.tag
+
