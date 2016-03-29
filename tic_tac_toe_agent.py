@@ -14,7 +14,7 @@ class TicTacToeAgent:
 		possible_moves = []
 		for i in xrange(len(board)):
 			for j in xrange(len(board[i])):
-				if board[i][j]['value'] is None:
+				if board[i][j] is None:
 					possible_moves.append((i, j))
 		return possible_moves
 
@@ -26,18 +26,18 @@ class TicTacToeAgent:
 
 		# Row
 		for j in xrange(len(board[x])):
-			if board[x][j]['value'] == self.tag:
+			if board[x][j] == self.tag:
 				count += 1
-			elif board[x][j]['value'] is not None:
+			elif board[x][j] is not None:
 				opponent_count += 1
 		score += math.pow(10, count) - math.pow(10, opponent_count)
 		count = 0
 
 		# Column
 		for i in xrange(len(board[y])):
-			if board[i][y]['value'] == self.tag:
+			if board[i][y] == self.tag:
 				count += 1
-			elif board[i][y]['value'] is not None:
+			elif board[i][y] is not None:
 				opponent_count += 1
 		score += math.pow(10, count) - math.pow(10, opponent_count)
 		count = 0				
@@ -45,18 +45,18 @@ class TicTacToeAgent:
 		# Diagonals
 		if x == y:
 			for i in xrange(len(board)):
-				if board[i][i]['value'] == self.tag:
+				if board[i][i] == self.tag:
 					count += 1
-				elif board[i][i]['value'] is not None:
+				elif board[i][i] is not None:
 					opponent_count += 1	
 			score += math.pow(10, count) - math.pow(10, opponent_count)
 			count = 0
 
 		if x + y == len(board) - 1:
 			for i in xrange(len(board)):
-				if board[i][len(board) - 1 - i]['value'] == self.tag:
+				if board[i][len(board) - 1 - i] == self.tag:
 					count += 1
-				elif board[i][len(board) - 1 - i]['value'] is not None:
+				elif board[i][len(board) - 1 - i] is not None:
 					opponent_count += 1	
 			score += math.pow(10, count) - math.pow(10, opponent_count)
 
@@ -70,7 +70,7 @@ class TicTacToeAgent:
 			ratings.append(self.rate_move(board, move))
 
 		x, y = random.choice(possible_moves) if len(possible_moves) == math.pow(len(board), 2) else possible_moves[ratings.index(min(ratings))]
-		board[x][y]['value'] = self.tag
+		board[x][y] = self.tag
 
 
 	def get_tag(self):

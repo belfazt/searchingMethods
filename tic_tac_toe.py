@@ -7,7 +7,7 @@ class TicTacToe:
 
 	def __init__(self, size=3, players=[TicTacToeAgent('o'), TicTacToeAgent('x')]):
 		self.size = size
-		self.board = [[{'value': None, 'visited': False} for _ in xrange(0, size)] for _ in xrange(0, size)]
+		self.board = [[None for _ in xrange(0, size)] for _ in xrange(0, size)]
 		self.players = players
 
 	def __str__(self):
@@ -26,10 +26,10 @@ class TicTacToe:
 
 		# Rows
 		for i in xrange(self.size):
-			current_tag = board[i][0]['value']
+			current_tag = board[i][0]
 			if current_tag is not None:
 				for j in xrange(1, self.size):
-					if board[i][j]['value'] == current_tag:
+					if board[i][j] == current_tag:
 						count += 1
 					else:
 						break
@@ -40,10 +40,10 @@ class TicTacToe:
 		
 		# Columns
 		for i in xrange(self.size):
-			current_tag = board[0][i]['value']
+			current_tag = board[0][i]
 			if current_tag is not None:
 				for j in xrange(1, self.size):
-					if board[j][i]['value'] == current_tag:
+					if board[j][i] == current_tag:
 						count += 1
 					else:
 						break
@@ -53,10 +53,10 @@ class TicTacToe:
 			count = 1		
 
 		# Diagonals
-		current_tag = board[0][0]['value']
+		current_tag = board[0][0]
 		if current_tag is not None:
 			for i in xrange(1, self.size):
-				if board[i][i]['value'] == current_tag:
+				if board[i][i] == current_tag:
 					count += 1
 				else:
 					break
@@ -64,10 +64,10 @@ class TicTacToe:
 			return True
 		count = 1
 
-		current_tag = board[0][self.size - 1]['value']
+		current_tag = board[0][self.size - 1]
 		if current_tag is not None:
 			for i in xrange(1, self.size):
-				if board[i][self.size - 1 - i]['value'] == current_tag:
+				if board[i][self.size - 1 - i] == current_tag:
 					count += 1
 				else: 
 					break;
@@ -83,7 +83,7 @@ class TicTacToe:
 		
 		for i in self.get_board():
 			for j in i:
-				if j['value'] is None:
+				if j is None:
 					return False
 
 		return True
@@ -108,7 +108,7 @@ class TicTacToe:
 		board = self.get_board()
 		for i in xrange(0, self.size):
 			for j in xrange(0, self.size):
-				print board[i][j]['value'] if board[i][j]['value'] != None else str('_'),
+				print board[i][j] if board[i][j] != None else str(' '),
 				if j != self.size - 1:
 					print '|',
 			if i != self.size - 1:
